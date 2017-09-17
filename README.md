@@ -1,3 +1,3 @@
 # localhost
 
-ansible-playbook env.yml -i hosts -s
+sudo ansible-playbook env.yml -i hosts
