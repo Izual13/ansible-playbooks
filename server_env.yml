@@ -29,3 +29,7 @@
       dnf: 
         name: docker-compose
         state: latest
+
+    - service:
+        name: docker
+        state: started
