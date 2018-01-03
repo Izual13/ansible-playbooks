@@ -1,6 +1,6 @@
-# env.yml
+# servers_env.yml
 ---
-- hosts: all
+- hosts: servers
   vars:
     ansible_ssh_private_key_file: "{{ './keys/'+inventory_hostname+'_id_rsa' }}"
 
@@ -29,9 +29,3 @@
       dnf: 
         name: docker-compose
         state: latest
-
-    - name: install wireshark
-      dnf:
-        name: wireshark-qt
-        state: latest
-      with_items: "{{ groups['localhost'] }}"
