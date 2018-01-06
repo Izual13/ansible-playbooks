@@ -31,3 +31,13 @@
       dnf:
         name: wireshark-qt
         state: latest
+
+    - name: install Java
+      dnf:
+        name: java
+        state: latest
+
+    - name: install maven
+      dnf:
+        name: java
+        state: latest
