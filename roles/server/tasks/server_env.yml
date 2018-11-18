@@ -1,0 +1,30 @@
+---
+
+- name: upgrade all packages
+  dnf:
+    name: "*"
+    state: latest
+
+- name: install git
+  dnf:
+    name: git
+    state: latest
+
+- name: install tmux
+  dnf:
+    name: tmux
+    state: latest
+
+- name: install docker
+  dnf:
+    name: "https://download.docker.com/linux/fedora/27/x86_64/stable/Packages/docker-ce-17.12.0.ce-1.fc27.x86_64.rpm"
+    state: latest
+
+- name: install docker-compose
+  dnf:
+    name: docker-compose
+    state: latest
+
+- service:
+    name: docker
+    state: started
