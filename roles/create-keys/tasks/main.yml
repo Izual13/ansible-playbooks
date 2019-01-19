@@ -1,3 +1,4 @@
+---
 - name: Create directory keys
   file:
     path: keys
