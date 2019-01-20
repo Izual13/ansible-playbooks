@@ -35,6 +35,11 @@
     name: docker-compose
     state: latest
 
+- name: install iotop
+  dnf:
+    name: iotop
+    state: latest
+
 - service:
     name: docker
     state: started
