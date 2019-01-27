@@ -1,0 +1,42 @@
+---
+
+- name: Checkout dockervpn
+  git:
+    repo: 'https://github.com/Izual13/dockvpn.git'
+    dest: "~/dockervpn/"
+
+- name: Build an image
+  docker_image:
+    name: vpn
+    path: "~/dockervpn/"
+
+- name: VPN container
+  docker_container:
+    name: vpn
+    image: vpn
+    state: started
+    restart_policy: always
+    privileged: true
+    ports:
+    - "1194:1194"
+    - "443:443"
+
+- name: download key
+  block:
+    - name: get container_id
+      shell: "docker ps -a | grep vpn | grep -oE \"^.{12}\""
+      register: container_id
+    - name: debug
+      debug: 
+        msg: "container_id: {{ container_id }}"
+  always:
+    - debug:
+        msg: 'close port'
+
+
+
+
+
+
+
+

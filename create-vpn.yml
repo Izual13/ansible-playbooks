@@ -1,0 +1,7 @@
+---
+- hosts: servers
+  strategy: free
+  roles:
+    - vpn
+  vars:
+    ansible_ssh_private_key_file: "{{ '.keys/'+inventory_hostname+'_id_rsa' }}"
