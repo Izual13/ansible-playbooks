@@ -28,7 +28,7 @@
       register: container_id
     - name: debug
       debug: 
-        msg: "container_id: {{ container_id }}"
+        msg: "container_id: {{ container_id.stdout }}"
   always:
     - debug:
         msg: 'close port'
