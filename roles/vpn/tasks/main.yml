@@ -21,17 +21,20 @@
     - "1194:1194"
     - "443:443"
 
-- name: download key
-  block:
-    - name: get container_id
-      shell: "docker ps -a | grep vpn | grep -oE \"^.{12}\""
-      register: container_id
-    - name: debug
-      debug: 
-        msg: "container_id: {{ container_id.stdout }}"
-  always:
-    - debug:
-        msg: 'close port'
+- name: download config
+  shell: "docker exec vpn /bin/cat /etc/openvpn/client.ovpn"
+  register: config
+  
+- name: print config
+  debug:
+    msg: "{{config.stdout}}"  
+
+- name: save config  
+  local_action: 
+    copy content={{ config.stdout }} dest=client.ovpn
+
+
+  
 
 
 
