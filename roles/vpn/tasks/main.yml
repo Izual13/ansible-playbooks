@@ -17,6 +17,8 @@
     name: vpn
     build:
       path: "~/dockervpn/"
+      pull: yes
+    source: build
 
 - name: VPN container
   docker_container:
@@ -31,7 +33,10 @@
 
 - name: download config
   shell: "docker exec vpn /bin/cat /etc/openvpn/client.ovpn"
+  retries: 5
+  delay: 5
   register: config
+  until: config.rc == 0
   
 - name: print config
   debug:
