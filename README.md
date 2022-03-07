@@ -10,6 +10,8 @@ ansible-playbook fedora-servers.yml -i inventories/production/hosts
 
 ansible-playbook create-vpn.yml -i inventories/production/hosts
 
+ansible-playbook create-wireguard.yml -i inventories/production/hosts
+
 ssh -i .keys/*_id_rsa 
 
 

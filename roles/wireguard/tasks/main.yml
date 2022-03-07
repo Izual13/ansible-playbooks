@@ -1,0 +1,76 @@
+---
+- name: set ip address
+  set_fact:
+    ip_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"  
+
+- name: print ip address
+  debug:
+    msg: "{{ip_address}}"  
+
+- name: Install wireguard
+  package: name=wireguard-tools state=present
+
+- name: generate private_key
+  shell: "wg genkey"
+  retries: 5
+  delay: 5
+  register: private_key
+  until: private_key.rc == 0
+
+- name: set private key fact
+  set_fact:
+    private_key: "{{ private_key.stdout }}"
+  
+- name: print private_key
+  debug:
+    msg: "{{private_key}}"  
+
+- name: generate public_key
+  shell: "echo {{ private_key }} | wg pubkey"
+  retries: 5
+  delay: 5
+  register: public_key
+  until: public_key.rc == 0
+
+- name: set public key fact
+  set_fact:
+    public_key: "{{ public_key.stdout }}"  
+  
+- name: print public_key
+  debug:
+    msg: "{{public_key}}"  
+
+- name: create directory with keys  
+  local_action: 
+    file path=.keys state=directory mode=0755
+
+- name: save public_key  
+  local_action: 
+    copy content={{ public_key }} dest=.keys/wg-srv-public
+
+- name: upload config
+  ansible.builtin.template:
+    src: templates/wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: enable and persist ipv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    sysctl_set: yes
+    reload: yes
+
+- name: start wireguard and enable on boot
+  ansible.builtin.service:
+    name: "wg-quick@wg0"
+    enabled: yes
+    state: started
+
+
+
+
+
