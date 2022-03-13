@@ -44,7 +44,7 @@
 
 - name: save config  
   local_action: 
-    copy content={{ config.stdout }} dest=client.ovpn
+    copy content={{ config.stdout }} dest=.keys/client.ovpn
 
 
   
