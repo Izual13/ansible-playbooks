@@ -3,5 +3,7 @@
   strategy: free
   roles:
     - vpn
+  become: yes
+  become_user: "{{ ansible_user | default('root') }}"
   vars:
     ansible_ssh_private_key_file: "{{ '.keys/'+inventory_hostname+'_id_rsa' }}"
