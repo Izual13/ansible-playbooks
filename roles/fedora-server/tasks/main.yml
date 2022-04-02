@@ -36,6 +36,7 @@
   dnf:
     name: "docker-ce"
     state: latest
+  notify: ["Start Docker"]
 
 - name: install docker cli
   dnf:
@@ -46,7 +47,6 @@
   dnf:
     name: "containerd.io"
     state: latest
-  notify: ["Start Docker"]
 
 - name: install docker-compose
   dnf:
