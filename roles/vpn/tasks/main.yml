@@ -1,7 +1,14 @@
 ---
 
+- name: ubuntu install python3-pip 
+  apt:
+    name: python3-pip
+    update_cache: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
 - name: Install python3-pip
   package: name=python3-pip state=present
+  when: ansible_distribution != 'Debian' and ansible_distribution != 'Ubuntu'
 
 - name: Install Docker Module for Python
   pip:
@@ -28,13 +35,13 @@
     restart_policy: always
     privileged: true
     ports:
-    - "1194:1194"
-    - "443:443"
+    - "25:25/tcp"
+    - "123:123/udp"
 
 - name: download config
   shell: "docker exec vpn /bin/cat /etc/openvpn/client.ovpn"
   retries: 5
-  delay: 5
+  delay: 10
   register: config
   until: config.rc == 0
   
