@@ -32,7 +32,7 @@
       [Peer]
       PublicKey = {{ lookup('file', './.keys/wg-srv-public') }}
       AllowedIPs = 0.0.0.0/0
-      Endpoint = {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:51820
+      Endpoint = {{ inventory_hostname }}:51820
   local_action: 
     copy content={{ msg }} dest=.keys/wg-client-config
 
