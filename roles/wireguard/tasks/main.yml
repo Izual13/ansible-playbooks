@@ -8,7 +8,18 @@
     msg: "{{ip_address}}"  
 
 - name: Install wireguard
-  package: name=wireguard-tools state=present
+  package: 
+    name:
+      - wireguard-tools
+      - policycoreutils-python-utils
+      - firewalld
+    state: present  
+
+- name: start firewalld
+  ansible.builtin.service:
+    name: "firewalld"
+    enabled: yes
+    state: started
 
 - name: generate private_key
   shell: "wg genkey"
@@ -79,9 +90,6 @@
     state: present
     sysctl_set: yes
     reload: yes
-
-- name: Install policycoreutils-python-utils
-  package: name=policycoreutils-python-utils state=present
 
 - name: fix Security Enhanced Linux Policy [fedora]
   shell: "semanage permissive -a wireguard_t"
