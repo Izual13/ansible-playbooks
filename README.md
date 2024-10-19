@@ -30,3 +30,5 @@ This Ansible playbook automates the process of creating SSH keys for a list of s
 > ansible-playbook create-wireguard.yml -i inventories/production/hosts
 >
 > ansible-playbook create-wireguard-peer.yml -i inventories/production/hosts
+>
+> qrencode -t ansiutf8 < config
