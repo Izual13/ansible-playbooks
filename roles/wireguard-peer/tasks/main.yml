@@ -1,0 +1,72 @@
+---
+- name: generate private_key
+  shell: "wg genkey"
+  retries: 5
+  delay: 5
+  register: private_key
+  until: private_key.rc == 0
+
+- name: set private key fact
+  set_fact:
+    private_key: "{{ private_key.stdout }}"
+
+- name: create directory with keys  
+  local_action: 
+    file path=.keys state=directory mode=0755
+
+- name: save private_key  
+  local_action: 
+    module: lineinfile
+    create: yes
+    dest: ".keys/wg-cli-private"
+    line: "{{ private_key }}"
+
+- name: print client config
+  vars:
+    msg: |   
+      [Interface]
+      Address = 10.0.0.{{ (lookup('pipe', 'wc -l < ./.keys/wg-cli-private') | int ) + 1 }}/24
+      DNS = 8.8.8.8, 8.8.4.4
+      PrivateKey = {{ private_key }}
+       
+      [Peer]
+      PublicKey = {{ lookup('file', './.keys/wg-srv-public') }}
+      AllowedIPs = 0.0.0.0/0
+      Endpoint = {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:51820
+  local_action: 
+    copy content={{ msg }} dest=.keys/wg-client-config
+
+- name: generate public_key
+  shell: "echo {{ private_key }} | wg pubkey"
+  retries: 5
+  delay: 5
+  register: public_key
+  until: public_key.rc == 0
+
+- name: set public key fact
+  set_fact:
+    public_key: "{{ public_key.stdout }}"  
+  
+- name: print public_key
+  debug:
+    msg: "{{public_key}}"  
+
+- name: Insert peer in /etc/wireguard/wg0.conf
+  blockinfile:
+    path: /etc/wireguard/wg0.conf
+    block: |
+
+      [Peer]
+      PublicKey = {{ public_key }}
+      AllowedIPs = 10.0.0.0/24
+
+- name: start wireguard and enable on boot
+  ansible.builtin.service:
+    name: "wg-quick@wg0"
+    enabled: yes
+    state: restarted
+
+
+
+
+
