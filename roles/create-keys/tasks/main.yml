@@ -6,17 +6,17 @@
     mode: 0755
 
 - name: Generate SSH keys
-  command: ssh-keygen -b 2048 -t rsa -f {{item}}_id_rsa -q -N ""
+  command: ssh-keygen -b 2048 -t rsa -f {{ item | replace('.', '_') }}_id_rsa -q -N ""
   args:
     chdir: .keys/
-    creates: "{{item}}_id_rsa"
-  with_items: "{{ groups['all'] }}"
-
-- name: run ssh-keyscan to add keys to known_hosts
-  lineinfile:
-    dest: ~/.ssh/known_hosts
-    create: yes
-    state: present
-    line: "{{ lookup('pipe', 'ssh-keyscan -t rsa ' + item) }}"
-    regexp: "^{{item}}"
+    creates: "{{ item | replace('.', '_') }}_id_rsa"
   with_items: "{{ groups['servers'] }}"
+
+# - name: run ssh-keyscan to add keys to known_hosts
+#   lineinfile:
+#     dest: ~/.ssh/known_hosts
+#     create: yes
+#     state: present
+#     line: "{{ lookup('ansible.builtin.pipe', 'ssh-keyscan -t rsa ' + item) }}"
+#     regexp: "^{{item}}"
+#   with_items: "{{ groups['servers'] }}"

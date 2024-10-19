@@ -1,0 +1,8 @@
+ip=$(firewall-cmd --direct --get-rules ipv4 nat POSTROUTING | grep '\-s 10.0.0.0/24 '"'"'!'"'"' -d 10.0.0.0/24' | grep -oE '[^ ]+$')
+# Using both permanent and not permanent rules to avoid a firewalld reload.
+firewall-cmd --remove-port="51820"/udp
+firewall-cmd --zone=trusted --remove-source=10.0.0.0/24
+firewall-cmd --permanent --remove-port="51820"/udp
+firewall-cmd --permanent --zone=trusted --remove-source=10.0.0.0/24
+firewall-cmd --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.0.0.0/24 ! -d 10.0.0.0/24 -j SNAT --to "{{ip_address}}"
+firewall-cmd --permanent --direct --remove-rule ipv4 nat POSTROUTING 0 -s 10.0.0.0/24 ! -d 10.0.0.0/24 -j SNAT --to "{{ip_address}}"

@@ -1,7 +1,7 @@
 ---
 - name: Set authorized key, removing all the authorized key already set
   authorized_key:
-    user: root
-    key: "{{ lookup('file', '.keys/'+inventory_hostname+'_id_rsa.pub') }}"
+    user: "{{ansible_user}}"
+    key: "{{ lookup('file', '.keys/'+ (inventory_hostname | replace('.', '_')) +'_id_rsa.pub') }}"
     state: present
     exclusive: yes
