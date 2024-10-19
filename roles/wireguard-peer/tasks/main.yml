@@ -10,6 +10,10 @@
   set_fact:
     private_key: "{{ private_key.stdout }}"
 
+- name: set port
+  set_fact:
+    wg_port: "{{ gw_port }}"  
+
 - name: create directory with keys  
   local_action: 
     file path=.keys state=directory mode=0755
@@ -32,7 +36,7 @@
       [Peer]
       PublicKey = {{ lookup('file', './.keys/wg-srv-public') }}
       AllowedIPs = 0.0.0.0/0
-      Endpoint = {{ inventory_hostname }}:51820
+      Endpoint = {{ inventory_hostname }}:{{ gw_port }}
   local_action: 
     copy content={{ msg }} dest=.keys/wg-client-config
 

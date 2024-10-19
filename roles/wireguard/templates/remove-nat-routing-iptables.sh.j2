@@ -5,7 +5,7 @@ IPT6="/sbin/ip6tables"
 IN_FACE="eth0"                   
 WG_FACE="wg0"                    
 SUB_NET="10.0.0.0/24"            
-WG_PORT="51820"                  
+WG_PORT="{{ wg_port }}"                  
 
 $IPT -t nat -D POSTROUTING -s $SUB_NET -o $IN_FACE -j MASQUERADE
 $IPT -D INPUT -i $WG_FACE -j ACCEPT

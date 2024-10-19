@@ -3,9 +3,14 @@
   set_fact:
     ip_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"  
 
-- name: print ip address
+- name: set port
+  set_fact:
+    wg_port: "{{ gw_port }}"  
+
+- name: print ip address and port
   debug:
-    msg: "{{ip_address}}"  
+    msg: "{{ip_address}}:{{wg_port}}"  
+
 
 - name: Install wireguard
   package: 
@@ -91,7 +96,7 @@
     mode: '0700'
   when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
-  - name: upload add-nat for ubuntu
+- name: upload add-nat for ubuntu
   ansible.builtin.template:
     src: templates/add-nat-routing-iptables.sh.j2
     dest: /etc/wireguard/add-nat-routing.sh

@@ -1,6 +1,6 @@
-firewall-cmd --add-port="51820"/udp
+firewall-cmd --add-port="{{ wg_port }}"/udp
 firewall-cmd --zone=trusted --add-source=10.0.0.0/24
-firewall-cmd --permanent --add-port="51820"/udp
+firewall-cmd --permanent --add-port="{{ wg_port }}"/udp
 firewall-cmd --permanent --zone=trusted --add-source=10.0.0.0/24
 # Set NAT for the VPN subnet
 firewall-cmd --direct --add-rule ipv4 nat POSTROUTING 0 -s 10.0.0.0/24 ! -d 10.0.0.0/24 -j SNAT --to "{{ip_address}}"

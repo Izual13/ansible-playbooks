@@ -1,6 +1,6 @@
 [Interface]
 Address = 10.0.0.1/24
 PrivateKey = {{ private_key }}
-ListenPort = 51820
+ListenPort = {{ wg_port }}
 PostUp = /etc/wireguard/add-nat-routing.sh
 PostDown = /etc/wireguard/remove-nat-routing.sh
