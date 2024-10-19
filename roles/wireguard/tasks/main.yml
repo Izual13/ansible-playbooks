@@ -11,9 +11,15 @@
   package: 
     name:
       - wireguard-tools
+    state: present  
+
+- name: Install policycoreutils and firewall for fpm-based OS
+  package: 
+    name:
       - policycoreutils-python-utils
       - firewalld
     state: present  
+  when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
 - name: start firewalld
   ansible.builtin.service:
@@ -67,21 +73,41 @@
     group: root
     mode: '0700'
 
-- name: upload add-nat
+- name: upload add-nat for rpm-based OS
   ansible.builtin.template:
-    src: templates/add-nat-routing.sh.j2
+    src: templates/add-nat-routing-firewall.sh.j2
     dest: /etc/wireguard/add-nat-routing.sh
     owner: root
     group: root
     mode: '0700'
+  when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
-- name: upload remove-nat
+- name: upload remove-nat for rpm-based OS
   ansible.builtin.template:
-    src: templates/remove-nat-routing.sh.j2
+    src: templates/remove-nat-routing-firewall.sh.j2
     dest: /etc/wireguard/remove-nat-routing.sh
     owner: root
     group: root
     mode: '0700'
+  when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
+
+  - name: upload add-nat for ubuntu
+  ansible.builtin.template:
+    src: templates/add-nat-routing-iptables.sh.j2
+    dest: /etc/wireguard/add-nat-routing.sh
+    owner: root
+    group: root
+    mode: '0700'
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+
+- name: upload remove-nat for ubuntu
+  ansible.builtin.template:
+    src: templates/remove-nat-routing-iptables.sh.j2
+    dest: /etc/wireguard/remove-nat-routing.sh
+    owner: root
+    group: root
+    mode: '0700'
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
 
 - name: enable and persist ipv4 forwarding
   sysctl:
@@ -93,7 +119,7 @@
 
 - name: fix Security Enhanced Linux Policy [fedora]
   shell: "semanage permissive -a wireguard_t"
-  when: ansible_distribution == 'Fedora'
+  when: ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
 
 - name: start wireguard and enable on boot
   ansible.builtin.service:
